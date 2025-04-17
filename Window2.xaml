@@ -1,0 +1,40 @@
+﻿<Window x:Class="AAAAA1.Window2"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AAAAA1"
+        mc:Ignorable="d"
+        Title="Лаборант-исследователь" Height="450" Width="800">
+    <Grid Background="#FF3DFF33">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="160*"/>
+            <RowDefinition Height="215*"/>
+            <RowDefinition Height="44*"/>
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="Name" HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Bottom" RenderTransformOrigin="-2.751,-6.26" Height="69" Width="397" Margin="10,0,0,10"/>
+        <Image Source="laborant_2.png" Height="68" Margin="0,-2,0,94" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="92"/>
+        <TextBlock x:Name="timer" HorizontalAlignment="Left" Margin="130,26,0,0" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Top" Height="36" Width="78"/>
+        <TabControl Margin="0,0,10,5" Grid.Row="1" Height="200" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="772">
+            <TabItem Header="Отчёт">
+                <Grid Background="#FFE5E5E5">
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="Список не выполненых услуг">
+                <Grid Background="#FFE5E5E5">
+                    <DataGrid x:Name="Analaz" IsReadOnly="true" AutoGenerateColumns="false" Margin="287,0,0,0" MouseDoubleClick="Analaz_MouseDoubleClick">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Номер" Binding="{Binding id}"/>
+                            <DataGridTextColumn Header="Заказ" Binding="{Binding zakazid}"/>
+                            <DataGridTextColumn Header="Услуга" Binding="{Binding services}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button x:Name="otpravit" Content="Отправить" HorizontalAlignment="Left" Margin="207,0,0,112" VerticalAlignment="Bottom" Width="75" Click="otpravit_Click"/>
+                    <ProgressBar  Maximum="100" Minimum="0" Value="5" HorizontalAlignment="Right" Height="35" Margin="0,0,479,137" VerticalAlignment="Bottom" Width="287"/>
+                </Grid>
+
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
