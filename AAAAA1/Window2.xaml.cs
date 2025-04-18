@@ -16,6 +16,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Globalization;
+
 
 namespace AAAAA1
 {
@@ -24,8 +26,8 @@ namespace AAAAA1
     /// </summary>
     public partial class Window2 : Window
     {
-        string name;
-        int IDZAKAZ;
+        string name;// название выбранного анализатора
+        int IDZAKAZ;// Id текущего закакза
         public Window2()
         {
             InitializeComponent();
@@ -41,7 +43,7 @@ namespace AAAAA1
         }
         public static TimeSpan seconds = TimeSpan.FromSeconds(0);
         public static bool obl = false;
-        public static TimeSpan time = TimeSpan.FromSeconds(9000);
+        public static TimeSpan time = TimeSpan.FromSeconds(9000);// для отслеживания сеанса
         private void timer_Tick(object sender, EventArgs e)
         {
             if (obl = false && seconds >= TimeSpan.FromSeconds(8100)) { obl = true; MessageBox.Show("Осталось 15 минут"); }
@@ -49,11 +51,13 @@ namespace AAAAA1
             else Application.Current.Shutdown();
             timer.Text = time.Subtract(seconds).ToString();
         }
+        // таймер иметации процесса иследования
         public DispatcherTimer researchTimer = new DispatcherTimer();
         public int times = 0;
         public bool GoNext = false;
         private void Research_Tick(object sender, EventArgs e)
         {
+            // Процес иследования  Заполнение прогресс бара
             if (times < 10)
             {
                 times++;
@@ -62,7 +66,7 @@ namespace AAAAA1
             }
             else
             {
-                Services serices1 = new Services();
+                Services serices1 = new Services();// завершение процесса иследования
                // serices1.serviceCode = ThisResearch.services.Value;
                 researchTimer.Stop();
                 times = 0;
@@ -77,29 +81,30 @@ namespace AAAAA1
         public Zakaz_ zakazik = new Zakaz_();
         private void Analaz_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            string vixod = Environment.CurrentDirectory.ToString() + "\\Analyzer\\Analyzer\\LIMSAnalyzers.exe";
+            string vixod = Environment.CurrentDirectory.ToString() + "\\Analyzer\\Analyzer\\LIMSAnalyzers.exe";// запуск программы анализатора
             var s= Process.Start(vixod);
             УП_01_ИвановEntities BD = new УП_01_ИвановEntities();
+            // Настройка и запуск прогресс бара
             Bar.Visibility = Visibility.Visible;
             researchTimer.Tick += new EventHandler(Research_Tick);
             researchTimer.Interval = new TimeSpan(0, 0, 1);
             researchTimer.Start();
 
-            
+            // получение выбранного анализатора
             name= (Analiz.SelectedValue).ToString();
 
             Services services1 = new Services();
-
+            // получекние выбранного иследования
             HistoryResearch_ выбранный = (HistoryResearch_)Analaz.SelectedItem;
             aboba.Add(выбранный);
             List<HistoryResearch_> заказ_s = new List<HistoryResearch_>() { выбранный };
 
-            IDZAKAZ = (int)заказ_s[0].zakazid;//
-
+            IDZAKAZ = (int)заказ_s[0].zakazid;//получение айди закакза
+            // получение данных о заказе
             var datazakaz1 = BD.Zakaz_.FirstOrDefault(z => z.id == IDZAKAZ);
 
             string patient = (datazakaz1.UserId).ToString();
-
+            // получение кода услуги
             services1.serviceCode = (int)заказ_s[0].services;
 
             List<Services> services = new List<Services>();
@@ -107,6 +112,7 @@ namespace AAAAA1
 
             // name – название выбранного анализатора
             //    name - название выбранного анализатора
+            // отправка данных на Api анализатора
             var httpWebRequest = (HttpWebRequest)WebRequest.Create($"http://localhost:5000/api/analyzer/{name}"); // строка подключения к API
             httpWebRequest.ContentType = "application/json"; // формат работы с данными
             httpWebRequest.Method = "POST"; // Метод для отправки данных.
@@ -133,27 +139,9 @@ namespace AAAAA1
 
         private void Analaz_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //УП_01_ИвановEntities BD = new УП_01_ИвановEntities();
-            //ThisResearch = Analaz.SelectedItem as HistoryResearch_;
-            //if (ThisResearch.Services_.Code == 619) Analiz.IsEnabled = true;
-            //if (ThisResearch.Services_.Code == 311) { Analiz.SelectedValue = BD.Analizators_.ToList()[0]; Analiz.IsEnabled = false; }
-            //if (ThisResearch.Services_.Code == 548) { Analiz.SelectedValue = BD.Analizators_.ToList()[1]; Analiz.IsEnabled = false; }
-            //if (ThisResearch.Services_.Code == 258) Analiz.IsEnabled = true;
-            //if (ThisResearch.Services_.Code == 176) { Analiz.SelectedValue = BD.Analizators_.ToList()[1]; Analiz.IsEnabled = false; }
-            //if (ThisResearch.Services_.Code == 501) { Analiz.SelectedValue = BD.Analizators_.ToList()[0]; Analiz.IsEnabled = false; }
-            //if (ThisResearch.Services_.Code == 543) Analiz.IsEnabled = true;
-            //if (ThisResearch.Services_.Code == 557) { Analiz.SelectedValue = BD.Analizators_.ToList()[0]; Analiz.IsEnabled = false; }
-            //if (ThisResearch.Services_.Code == 229) { Analiz.SelectedValue = BD.Analizators_.ToList()[0]; Analiz.IsEnabled = false; }
-            //if (ThisResearch.Services_.Code == 415) { Analiz.SelectedValue = BD.Analizators_.ToList()[0]; Analiz.IsEnabled = false; }
-            //if (ThisResearch.Services_.Code == 323) { Analiz.SelectedValue = BD.Analizators_.ToList()[0]; Analiz.IsEnabled = false; }
-            //if (ThisResearch.Services_.Code == 855) { Analiz.SelectedValue = BD.Analizators_.ToList()[1]; Analiz.IsEnabled = false; }
-            //if (ThisResearch.Services_.Code == 346) { Analiz.SelectedValue = BD.Analizators_.ToList()[0]; Analiz.IsEnabled = false; }
-            //if (ThisResearch.Services_.Code == 836) { Analiz.SelectedValue = BD.Analizators_.ToList()[1]; Analiz.IsEnabled = false; }
-            //if (ThisResearch.Services_.Code == 659) Analiz.IsEnabled = true;
-            //if (ThisResearch.Services_.Code == 797) { Analiz.SelectedValue = BD.Analizators_.ToList()[1]; Analiz.IsEnabled = false; }
-            //if (ThisResearch.Services_.Code == 287) { Analiz.SelectedValue = BD.Analizators_.ToList()[1]; Analiz.IsEnabled = false; }
+
         }
-        string alltext = null;
+        string alltext = null;// параметр для хранения тексат результата
         private void Poluchi_Click(object sender, RoutedEventArgs e)
         {
             УП_01_ИвановEntities BD = new УП_01_ИвановEntities();
@@ -185,18 +173,21 @@ namespace AAAAA1
             {
                 MessageBox.Show(ex.ToString());
             }
+            // отобрапжение результатов текст блок
             ContentOfList.Text = (getAnalizators.patient + " " + getAnalizators.services[0].serviceCode + " " + getAnalizators.services[0].result + " " + getAnalizators.progress);
             ContentOfList123.Text = (getAnalizators.services[0].result.ToString());
+            // проверка результатов на 
             foreach (Services serv in getAnalizators.services)
             {
-                if (double.TryParse(serv.result, out double result))
+                if (double.TryParse(serv.result, NumberStyles.Any, CultureInfo.InvariantCulture, out double result))
                 {
-                    if (result > BD.Services_.First(x => x.Code == serv.serviceCode).UpperLimitOfNormal * 5 && result < BD.Services_.First(x => x.Code == serv.serviceCode).LowerLimitOfNormal / 5)
+                    var serviceInfo = BD.Services_.First(x => x.Code == serv.serviceCode);
+                    if (result > BD.Services_.First(x => x.Code == serv.serviceCode).UpperLimitOfNormal * 5 || result < BD.Services_.First(x => x.Code == serv.serviceCode).LowerLimitOfNormal / 5)// проверка результатов на аномальные отклонения
                     {
                         MessageBoxResult resultM = MessageBox.Show(BD.Services_.First(x => x.Code == serv.serviceCode).Service + " отклоняется от нормы в 5 раз" + serv.result, "Отклонение от нормы", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
-                        if (resultM == MessageBoxResult.Yes)
+                        if (resultM == MessageBoxResult.OK)
                         {
-                            Work_analizators_ workanaliz = new Work_analizators_()
+                            Work_analizators_ workanaliz = new Work_analizators_()// запись в бд
                             {
                                 id_analisator = Analiz.SelectedIndex + 1,
                                 date = DateTime.Now,
@@ -207,11 +198,12 @@ namespace AAAAA1
                             BD.Work_analizators_.Add(workanaliz);
                             BD.SaveChanges();
                             alltext += BD.Services_.First(x => x.Code == serv.serviceCode).Service + " " + serv.result + "\n";
+                            MessageBox.Show("Принято");
                         }
                         else
                         {
                             MessageBox.Show("Отменён");
-                            Analaz.ItemsSource = BD.HistoryResearch_.ToList().Where(a => a.Zakaz_.statusOrder == 4);// Заполнение DAtaGrid только не выполнеными услугамим 
+                            Analaz.ItemsSource = BD.HistoryResearch_.ToList().Where(a => a.Zakaz_.statusOrder == 2);// Заполнение DAtaGrid только не выполнеными услугамим 
                             ContentOfList.Text = "";
                             ContentOfList123.Text = "";
                         }
@@ -223,11 +215,29 @@ namespace AAAAA1
 
 
                 }
+                else
+                {
+                    Work_analizators_ work = new Work_analizators_
+                    {
+                        date = DateTime.Today,
+                        id_historyResearch = aboba[0].id,
+                        id_analisator = Analiz.SelectedIndex + 1,
+                        id_sotrudnilck = 101,
+                        Result = ContentOfList123.Text
+                    };
+                    BD.Work_analizators_.Add(work);
+                    BD.Zakaz_.First(Z => Z.id == IDZAKAZ).statusOrder = 3;
+                    BD.SaveChanges();
+                    MessageBox.Show("Успешно добавленны в бд");
+                    Analaz.ItemsSource = BD.HistoryResearch_.ToList().Where(a => a.Zakaz_.statusOrder == 2);// Заполнение DAtaGrid только не выполнеными услугамим 
+                    ContentOfList.Text = "";
+                    ContentOfList123.Text = "";
+                }
             }
         }
         
         private void otpravit_Click(object sender, RoutedEventArgs e)
-        {// доработать исключения если в 5 раз больше
+        {// При подтверждении  запись в бд
             УП_01_ИвановEntities BD = new УП_01_ИвановEntities();
             Work_analizators_ work = new Work_analizators_
             {
@@ -247,13 +257,14 @@ namespace AAAAA1
         }
         private void oprov_Click(object sender, RoutedEventArgs e)
         {
+            // при отказе очистка и запись в бд с изменённым статусом
             УП_01_ИвановEntities BD = new УП_01_ИвановEntities();
             ContentOfList.Text = "";
             ContentOfList123.Text = "";
             MessageBox.Show("Повторите действия");
-            BD.Zakaz_.First(Z => Z.id == IDZAKAZ).statusOrder = 3;
+            BD.Zakaz_.First(Z => Z.id == IDZAKAZ).statusOrder = 2;
             BD.SaveChanges();
-            Analaz.ItemsSource = BD.HistoryResearch_.ToList().Where(a => a.Zakaz_.statusOrder == 4);// Заполнение DAtaGrid только не выполнеными услугамим 
+            Analaz.ItemsSource = BD.HistoryResearch_.ToList().Where(a => a.Zakaz_.statusOrder == 2);// Заполнение DAtaGrid только не выполнеными услугамим с 
             ContentOfList.Text = "";
             ContentOfList123.Text = "";
         }
